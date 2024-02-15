@@ -1,8 +1,9 @@
 org: sergiycheck
-
 service: todo-dynamo-db
-
 frameworkVersion: "3"
+
+plugins:
+  - serverless-plugin-typescript
 
 provider:
   name: aws
