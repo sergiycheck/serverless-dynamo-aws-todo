@@ -3,13 +3,14 @@
 import * as uuid from "uuid";
 
 import { DynamoDB } from "aws-sdk";
+import { eventLoggerWrapper } from "./event-logger-wrapper";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-export const create = (event, context, callback) => {
+const createHandler = (event, context, callback) => {
   const timestamp = new Date().getTime();
 
-  const data = JSON.parse(event.body);
+  const data = event;
 
   if (typeof data.text !== "string") {
     console.error("Validation Failed");
@@ -40,8 +41,10 @@ export const create = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(params.Item),
+      body: params.Item,
     };
     callback(null, response);
   });
 };
+
+export const create = eventLoggerWrapper(createHandler);

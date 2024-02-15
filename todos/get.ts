@@ -1,10 +1,11 @@
 "use strict";
 
 import { DynamoDB } from "aws-sdk";
+import { eventLoggerWrapper } from "./event-logger-wrapper";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-export const get = (event, context, callback) => {
+export const getHandler = (event, context, callback) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Key: {
@@ -28,8 +29,10 @@ export const get = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(result.Item),
+      body: result.Item,
     };
     callback(null, response);
   });
 };
+
+export const get = eventLoggerWrapper(getHandler);

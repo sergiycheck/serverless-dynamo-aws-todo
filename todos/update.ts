@@ -1,12 +1,13 @@
 "use strict";
 
-const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
+import { DynamoDB } from "aws-sdk";
+import { eventLoggerWrapper } from "./event-logger-wrapper";
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamoDb = new DynamoDB.DocumentClient();
 
-export const update = (event, context, callback) => {
+export const updateHandler = (event, context, callback) => {
   const timestamp = new Date().getTime();
-  const data = JSON.parse(event.body);
+  const data = event;
 
   // validation
   if (typeof data.text !== "string" || typeof data.checked !== "boolean") {
@@ -53,8 +54,10 @@ export const update = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(result.Attributes),
+      body: result.Attributes,
     };
     callback(null, response);
   });
 };
+
+export const update = eventLoggerWrapper(updateHandler);
